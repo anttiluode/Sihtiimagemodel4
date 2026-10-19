@@ -5,7 +5,8 @@
     python run.py --train-folder train --eval-folder unseen --eval-limit 32   # your own images
 
 Hyperparameters come from params_<data>.json (frozen by tune.py on validation).
-Folder mode uses params_natural.json.
+Folder mode uses params_folders.json if you made one with
+`python tune.py --train-folder <your train folder>`, otherwise params_natural.json.
 """
 import argparse
 import json
@@ -59,7 +60,8 @@ def main():
         train = load_images(a.train_folder, a.train_limit or None)
         test = load_images(a.eval_folder, a.eval_limit or None)
         check_disjoint(train, test)
-        cases, label, pfile = damaged_set(test, 73), f"folders {a.train_folder} -> {a.eval_folder}", "params_natural.json"
+        cases, label, pfile = damaged_set(test, 73), f"folders {a.train_folder} -> {a.eval_folder}", \
+            ("params_folders.json" if Path("params_folders.json").exists() else "params_natural.json")
     elif a.data == "synthetic":
         train, test = synthetic(320, 0), synthetic(32, 73)
         cases, label, pfile = damaged_set(test, 73), "synthetic contours (R1 seeds)", "params_synthetic.json"
@@ -70,6 +72,8 @@ def main():
     params = json.load(open(pfile))["params"] if Path(pfile).exists() else {}
     if not params:
         print(f"note: {pfile} not found, using built-in defaults", flush=True)
+    else:
+        print(f"parameters: {pfile}", flush=True)
     out = Path(a.output or f"runs/{'folders' if a.train_folder else a.data}")
     out.mkdir(parents=True, exist_ok=True)
 

@@ -2,3 +2,4 @@ __pycache__/
 runs/
 *.pkl
 .pytest_cache/
+params_folders.json

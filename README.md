@@ -120,12 +120,17 @@ python -m pytest -q                         # energy never rises, exact global s
 python run.py --data synthetic              # R1's exact 32 test images, seeds and masks
 python run.py --data natural                # 64 crops of three photographs never used in training
 python run.py --train-folder train --eval-folder unseen --eval-limit 32    # your own pictures (e.g. THINGS)
+
+# fairer on your own pictures: tune first on a held-out slice of YOUR train folder
+python tune.py --train-folder train          # writes params_folders.json (eval folder never opened)
+python run.py --train-folder train --eval-folder unseen --eval-limit 32    # now uses params_folders.json
 ```
 
 Each run writes `runs/<name>/metrics.json` (every image, every arm), `comparison.png` and `loop.gif`
 (one image settling, then each ping and re-settle, with the coarse layout and the local-state map beside it).
 Hyperparameters are frozen in `params_synthetic.json` / `params_natural.json` by `tune.py`, which only ever
-sees validation images. Folder mode uses the natural parameters. Fitting takes a few minutes; evaluation is
+sees validation images. Folder mode uses `params_folders.json` if `tune.py --train-folder` has made one (15% of the train
+folder, at most 32 images, held out as validation), otherwise the natural parameters. Fitting takes a few minutes; evaluation is
 several seconds per image because every image runs ~25 settles across the arms.
 
 ## Prior art (this is a combination, not an invention)

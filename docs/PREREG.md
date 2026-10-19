@@ -36,7 +36,11 @@ Recorded so nobody mistakes the gates below for predictions made blind:
 * Ping found ~1–2 distinct settled states per image; best-of-7 barely below the settled state.
 * Heating the sampler (dividing the energy by 10–30) made the posterior worse (0.105–0.117).
 
-So on validation the **switching local states did not pay** and the **linear medium won**.
+* Tuning the Wiener baseline fairly (shrinkage grid extended to 0.005–10 after the first grid
+  hit its edge) gave **0.0628** on synthetic validation — better than the linear medium (0.0699).
+
+So on validation the **switching local states did not pay**, the **linear medium beat retrieval**,
+and the **full-image Gaussian (Wiener) beat everything** on the synthetic contours.
 The main model for gate G4 is therefore declared to be the **linear medium** (chosen on validation).
 
 ## Gates (thresholds fixed now; lower MSE on hidden pixels is better)

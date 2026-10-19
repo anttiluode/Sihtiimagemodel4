@@ -68,6 +68,40 @@ def block_mean_matrix(side=SIDE, block=4):
     return D
 
 
+def difference_matrices(side=SIDE):
+    """Forward differences gx = x[:, c+1] - x[:, c], gy = x[r+1, :] - x[r, :] (0 on the last column/row)."""
+    n = side * side
+    Ax = np.zeros((n, n))
+    Ay = np.zeros((n, n))
+    for r in range(side):
+        for c in range(side):
+            i = r * side + c
+            if c + 1 < side:
+                Ax[i, i], Ax[i, i + 1] = -1., 1.
+            if r + 1 < side:
+                Ay[i, i], Ay[i, i + side] = -1., 1.
+    return Ax, Ay
+
+
+def coarse_matrix(kind="mean", side=SIDE, block=4):
+    """The linear 'soma' read-out C that the layout prior lives on.
+
+    mean     : block means (8x8 brightness layout)          -> 64 numbers
+    gradient : block means of gx and gy (summed gradients)  -> 128 numbers
+    both     : the two stacked                              -> 192 numbers
+    """
+    D = block_mean_matrix(side, block)
+    if kind == "mean":
+        return D
+    Ax, Ay = difference_matrices(side)
+    G = np.vstack([D @ Ax, D @ Ay])
+    if kind == "gradient":
+        return G
+    if kind == "both":
+        return np.vstack([D, G])
+    raise ValueError(kind)
+
+
 def patch_index(side=SIDE, patch=6):
     """(n_patches, patch*patch) flat pixel indices of every valid patch, stride 1."""
     grid = np.arange(side * side).reshape(side, side)
@@ -79,7 +113,7 @@ def centering(d):
 
 
 # ---------------------------------------------------------------- learning
-def learn_priors(train, K=20, patch=6, block=4, n_patches=40000, seed=0):
+def learn_priors(train, K=20, patch=6, block=4, n_patches=40000, seed=0, coarse="mean"):
     """Fit the raw priors once: a K-component GMM on mean-removed 6x6 patches,
     and the mean/covariance of the 8x8 block-mean layouts."""
     imgs = np.asarray(train, float)
@@ -92,11 +126,21 @@ def learn_priors(train, K=20, patch=6, block=4, n_patches=40000, seed=0):
     P = P - P.mean(1, keepdims=True)
     gmm = GaussianMixture(n_components=K, covariance_type="full", reg_covar=1e-4,
                           max_iter=200, random_state=seed).fit(P)
-    coarse = flat @ block_mean_matrix(SIDE, block).T
+    coarse_vals = flat @ coarse_matrix(coarse, SIDE, block).T
     return {"gmm_means": gmm.means_ - gmm.means_.mean(1, keepdims=True),
             "gmm_cov": gmm.covariances_, "gmm_weights": gmm.weights_,
-            "coarse_mu": coarse.mean(0), "coarse_cov": np.cov(coarse, rowvar=False),
+            "coarse_mu": coarse_vals.mean(0), "coarse_cov": np.cov(coarse_vals, rowvar=False),
+            "coarse": coarse,
             "patch": patch, "block": block}
+
+
+def with_coarse(pri, train, kind):
+    """Same patch mixture, layout prior refitted on another read-out."""
+    flat = np.asarray(train, float).reshape(len(train), -1)
+    vals = flat @ coarse_matrix(kind, SIDE, pri["block"]).T
+    out = dict(pri)
+    out.update(coarse=kind, coarse_mu=vals.mean(0), coarse_cov=np.cov(vals, rowvar=False))
+    return out
 
 
 # ---------------------------------------------------------------- the model
@@ -114,6 +158,7 @@ class Sihti4:
     block: int = 4
     gamma: float = 1.0
     temp: float = 0.0
+    coarse: str = "mean"
 
     # .......................................................... learning
     @classmethod
@@ -143,7 +188,7 @@ class Sihti4:
         c = pri["coarse_cov"]
         c = c + (shrink * np.trace(c) / len(c) + 1e-4) * np.eye(len(c))
         return cls(means, W, a, const, prec, logc, pri["coarse_mu"], np.linalg.inv(c),
-                   pri["patch"], pri["block"], gamma, temp)
+                   pri["patch"], pri["block"], gamma, temp, pri.get("coarse", "mean"))
 
     @property
     def Pm(self):
@@ -184,7 +229,7 @@ class Sihti4:
             pb.append(np.full(len(loc), p)); lb.append(loc); gb.append(gid)
         base = obs.ravel().copy()
         base[hidden] = 0.
-        D = block_mean_matrix(SIDE, self.block)
+        D = coarse_matrix(self.coarse, SIDE, self.block)
         cat = np.concatenate
         return {"obs": obs, "mask": mask, "hidden": hidden, "pidx": pidx,
                 "A_idx": (cat(pa), cat(la), cat(ga)), "b_idx": (cat(pb), cat(lb), cat(gb)),
@@ -234,6 +279,9 @@ class Sihti4:
             Dh = prep["Dh"]
             A += g * Dh.T @ self.coarse_prec @ Dh
             b += g * Dh.T @ self.coarse_prec @ (self.coarse_mu - prep["Dv_xv"])
+        if "extra" in prep:                      # optional extra quadratic term (oracle experiments)
+            A = A + prep["extra"][0]
+            b = b + prep["extra"][1]
         A += 1e-8 * np.eye(H)
         return A, b
 
@@ -246,6 +294,9 @@ class Sihti4:
         if g > 0:
             dc = prep["Dh"] @ x.ravel()[prep["hidden"]] + prep["Dv_xv"] - self.coarse_mu
             e += .5 * g * dc @ self.coarse_prec @ dc
+        if "extra" in prep:
+            xh = x.ravel()[prep["hidden"]]
+            e += .5 * xh @ prep["extra"][0] @ xh - prep["extra"][1] @ xh
         return float(e)
 
     # .......................................................... settle

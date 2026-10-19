@@ -43,6 +43,13 @@ So on validation the **switching local states did not pay**, the **linear medium
 and the **full-image Gaussian (Wiener) beat everything** on the synthetic contours.
 The main model for gate G4 is therefore declared to be the **linear medium** (chosen on validation).
 
+### Natural validation (60 crops from the bottom quarter of the training photographs), added before the natural test run
+
+* The synthetic test had already been run when this was written; nothing about the gates changed.
+* Natural photographs wanted a far weaker layout prior: linear medium best at gamma 0.3 (MSE 0.00605;
+  0.00621 at gamma 30), so **G1a is expected to fail on natural images** — the layout barely matters there.
+* 20-state medium best at gamma 3, noise 0.0003: 0.00609. Wiener (shrink 0.1): 0.00715.
+
 ## Gates (thresholds fixed now; lower MSE on hidden pixels is better)
 
 | Gate | Question | Pass condition |

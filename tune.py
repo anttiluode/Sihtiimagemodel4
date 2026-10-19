@@ -16,12 +16,20 @@ from sihti4 import Sihti4, learn_priors
 from baselines import Baselines
 from bench import mse, DEFAULTS
 
-GRID = {
-    "linear_gamma": [30., 100., 300., 1000.],
-    "gamma": [100., 300., 1000., 3000.],
-    "noise": [0.003, 0.01],
-    "size": [2.5, 5.0],
-    "wiener_shrink": [0.005, 0.02, 0.1, 0.3, 1.0, 3.0, 10.0],
+GRIDS = {
+    # first-pass grid; the Wiener shrinkage was extended once because 0.1 sat on the edge
+    "synthetic": {"linear_gamma": [30., 100., 300., 1000.],
+                  "gamma": [100., 300., 1000., 3000.],
+                  "noise": [0.003, 0.01],
+                  "size": [2.5, 5.0],
+                  "wiener_shrink": [0.005, 0.02, 0.1, 0.3, 1.0, 3.0, 10.0]},
+    # natural photographs wanted much weaker layout and sharper patch states; the grids
+    # were extended downward twice (validation only) until the optimum stopped moving by >1%
+    "natural": {"linear_gamma": [0.3, 1., 3., 10., 30., 100., 300., 1000.],
+                "gamma": [3., 10., 30., 100., 300., 1000., 3000.],
+                "noise": [0.0003, 0.001, 0.003, 0.01],
+                "size": [2.5, 5.0],
+                "wiener_shrink": [0.005, 0.02, 0.1, 0.3, 1.0, 3.0, 10.0]},
 }
 
 
@@ -43,6 +51,7 @@ def main():
     a = ap.parse_args()
     t0 = time.time()
     train, val = splits(a.data)
+    GRID = GRIDS[a.data]
     p = dict(DEFAULTS)
     log = {}
     pri = learn_priors(train, K=p["K"], patch=p["patch"], block=p["block"])

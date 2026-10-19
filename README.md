@@ -75,6 +75,49 @@ Receipts: [`results/synthetic`](results/synthetic) and [`results/natural`](resul
 * MSE still rewards blur. All model arms are blurrier than the truth (sharpness 0.4–0.65); retrieval is
   sharper and worse.
 
+## Gate R2 — brightness, summed gradients, or orientation at the soma?
+
+Follow-up to the reading of the 5 a.m. note as "the soma summates **gradients**, not brightness"
+([preregistration](docs/GRADIENT_PREREG.md), `python gradients.py --data synthetic|natural`, or
+`--train-folder train --eval-folder unseen` for your own pictures).
+The one-state linear medium fills the hole; a coarse read-out of the image is either handed in
+**true** (an oracle ceiling — what a perfect top-down message of that kind could do) or **predicted**
+from the visible surround by a learned Gaussian prior.
+
+| Read-out at 4x4 blocks | Synthetic: true | Synthetic: predicted | Natural: true | Natural: predicted |
+|---|---:|---:|---:|---:|
+| none | 0.0854 | — | 0.00539 | — |
+| brightness (block means) | 0.0451 | 0.0770 | 0.00401 | 0.00539 |
+| summed gradients (gx, gy) | 0.0567 | 0.0780 | 0.00489 | 0.00539 |
+| brightness + gradients | 0.0367 | **0.0723** | 0.00378 | 0.00539 |
+| orientation (structure tensor) | **0.0272** | — | **0.00344** | — |
+
+| Gate | Synthetic | Natural |
+|---|---|---|
+| R2-O1 true summed gradients beat true brightness (≥10%) | FAIL −25.9% | FAIL −21.7% |
+| R2-O2 true gradients add to true brightness (≥5%) | PASS +18.5% | PASS +5.8% |
+| R2-O3 true orientation beats true brightness (≥10%) | **PASS +39.6%** | **PASS +14.3%** |
+| R2-P1 predicted brightness+gradients beat predicted brightness (≥5%) | PASS +6.2% | FAIL 0.0% |
+| R2-P2 predicted gradients alone beat predicted brightness (≥5%) | FAIL −1.2% | FAIL 0.0% |
+
+**What it says.**
+
+* **Linear "summed gradients" are not the missing currency.** Summing a difference over a block telescopes
+  to its boundary: it knows the polarity of a step edge, but a line that enters and leaves a block sums to
+  about zero. True summed gradients help *less* than true brightness, on both sets.
+* **Orientation is.** The per-block structure tensor (gx², gy², gx·gy) — gradient *energy* by direction,
+  which is nonlinear and sign-blind — is the best possible top-down message on both sets, and in
+  `results/gradients_synthetic/comparison.png` the "TRUE orient." column visibly reconnects the strokes that
+  every other column leaves blurred. So the "an average can't say which way the edge runs" point is right;
+  the fix is second-order, not a summed first derivative.
+* **The truth is not the bottleneck; predicting it is.** On natural crops the true brightness layout would
+  cut the error by 26% and true orientation by 36%, yet nothing predicted from the visible surround helps
+  at all. On synthetic contours, brightness+gradients predicted together give a real 6% (still behind the
+  tuned Wiener filter, 0.0677). The open problem is a predictor for the hidden blocks' **orientation** from
+  the visible ring — the oracle says that is where the value is.
+* Caveat: the orientation oracle is solved by L-BFGS on a nonconvex energy; its best stiffness sat at the
+  edge of its grid on synthetic validation (1e8), so its ceiling may be higher still.
+
 ## The model
 
 A 32x32 grey image `x`; visible pixels are clamped, hidden pixels are unknowns.

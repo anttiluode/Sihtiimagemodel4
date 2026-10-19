@@ -1,0 +1,475 @@
+{
+ "data": "synthetic contours (R1 seeds)",
+ "settings": {
+  "gamma_mean": 100.0,
+  "gamma_gradient": 100.0,
+  "gamma_both": 100.0,
+  "tensor_lam": 100000000.0
+ },
+ "validation": {
+  "pred_mean": {
+   "0.3": 0.08021070674684859,
+   "3.0": 0.07928954563441357,
+   "30.0": 0.07508915812698382,
+   "100.0": 0.07143526418689349,
+   "300.0": 0.07257929264298778,
+   "1000.0": 0.08833237972344865
+  },
+  "pred_gradient": {
+   "0.3": 0.08026080537857612,
+   "3.0": 0.07932918037115666,
+   "30.0": 0.07487201037466021,
+   "100.0": 0.07215126891647868,
+   "300.0": 0.07424805053655556,
+   "1000.0": 0.08467888923621451
+  },
+  "pred_both": {
+   "0.3": 0.08003248142086188,
+   "3.0": 0.07839757407650406,
+   "30.0": 0.07096047140319005,
+   "100.0": 0.06585932894156292,
+   "300.0": 0.06620569835643753,
+   "1000.0": 0.0754575167887543
+  },
+  "oracle_tensor": {
+   "100000.0": 0.046754972345057606,
+   "1000000.0": 0.045597620459192766,
+   "10000000.0": 0.03900613894916661,
+   "100000000.0": 0.03290286968470891
+  }
+ },
+ "means": {
+  "flat": 0.08538687081840247,
+  "oracle_mean": 0.045064473027841015,
+  "pred_mean": 0.07704474439196757,
+  "oracle_gradient": 0.05674045665592066,
+  "pred_gradient": 0.07799795861017314,
+  "oracle_both": 0.03673811724748269,
+  "pred_both": 0.07225727022944384,
+  "oracle_tensor": 0.027225473919249187
+ },
+ "gates": {
+  "R2-O1 true summed gradients beat true brightness (>=10%)": {
+   "arm": "oracle_gradient",
+   "against": "oracle_mean",
+   "improvement": -0.2591,
+   "needed": 0.1,
+   "pass": false
+  },
+  "R2-O2 true gradients add to true brightness (>=5%)": {
+   "arm": "oracle_both",
+   "against": "oracle_mean",
+   "improvement": 0.1848,
+   "needed": 0.05,
+   "pass": true
+  },
+  "R2-O3 true orientation beats true brightness (>=10%)": {
+   "arm": "oracle_tensor",
+   "against": "oracle_mean",
+   "improvement": 0.3959,
+   "needed": 0.1,
+   "pass": true
+  },
+  "R2-P1 predicted brightness+gradients beat predicted brightness (>=5%)": {
+   "arm": "pred_both",
+   "against": "pred_mean",
+   "improvement": 0.0621,
+   "needed": 0.05,
+   "pass": true
+  },
+  "R2-P2 predicted gradients alone beat predicted brightness (>=5%)": {
+   "arm": "pred_gradient",
+   "against": "pred_mean",
+   "improvement": -0.0124,
+   "needed": 0.05,
+   "pass": false
+  }
+ },
+ "per_image": [
+  {
+   "flat": 0.05528986993951179,
+   "oracle_mean": 0.026952944848604322,
+   "pred_mean": 0.05685992512783079,
+   "oracle_gradient": 0.032979579899984166,
+   "pred_gradient": 0.05136901432520509,
+   "oracle_both": 0.021741617819032926,
+   "pred_both": 0.051985232437193954,
+   "oracle_tensor": 0.013019739806869064,
+   "index": 0,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.20638839077180104,
+   "oracle_mean": 0.048908294680193906,
+   "pred_mean": 0.1278622447448011,
+   "oracle_gradient": 0.10759064005918473,
+   "pred_gradient": 0.1708454190757498,
+   "oracle_both": 0.042162402299467654,
+   "pred_both": 0.11206008948214782,
+   "oracle_tensor": 0.06417679383718333,
+   "index": 1,
+   "mask_kind": "hole"
+  },
+  {
+   "flat": 0.06586092909991834,
+   "oracle_mean": 0.044134266522443656,
+   "pred_mean": 0.0592975689759198,
+   "oracle_gradient": 0.04064910755706459,
+   "pred_gradient": 0.04794772585641015,
+   "oracle_both": 0.036882256940382774,
+   "pred_both": 0.0444675584630634,
+   "oracle_tensor": 0.03837277016145946,
+   "index": 2,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.18535357893661628,
+   "oracle_mean": 0.08251542622824572,
+   "pred_mean": 0.139553172577237,
+   "oracle_gradient": 0.10214453827952806,
+   "pred_gradient": 0.13336452149892905,
+   "oracle_both": 0.07235141494198824,
+   "pred_both": 0.1224317831321596,
+   "oracle_tensor": 0.16438917184640156,
+   "index": 3,
+   "mask_kind": "hole"
+  },
+  {
+   "flat": 0.08319800467294174,
+   "oracle_mean": 0.03520507613180478,
+   "pred_mean": 0.0624218713480039,
+   "oracle_gradient": 0.05825469605390545,
+   "pred_gradient": 0.05721184285557057,
+   "oracle_both": 0.027104841907869482,
+   "pred_both": 0.047702380647236545,
+   "oracle_tensor": 0.027333934352601792,
+   "index": 4,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.11883839827816822,
+   "oracle_mean": 0.029686233035658267,
+   "pred_mean": 0.12796409020652127,
+   "oracle_gradient": 0.052250598692050926,
+   "pred_gradient": 0.12880858055994118,
+   "oracle_both": 0.024573678069782792,
+   "pred_both": 0.12698216278464564,
+   "oracle_tensor": 0.02848448012437644,
+   "index": 5,
+   "mask_kind": "hole"
+  },
+  {
+   "flat": 0.06629264557952473,
+   "oracle_mean": 0.037547626810701916,
+   "pred_mean": 0.05943766016210857,
+   "oracle_gradient": 0.047178311852802454,
+   "pred_gradient": 0.052939129072734584,
+   "oracle_both": 0.031220044400847247,
+   "pred_both": 0.052181748569200936,
+   "oracle_tensor": 0.016132481833541167,
+   "index": 6,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.15184608517314688,
+   "oracle_mean": 0.1165525207310197,
+   "pred_mean": 0.1359383177421273,
+   "oracle_gradient": 0.10484126145855077,
+   "pred_gradient": 0.15206853072716808,
+   "oracle_both": 0.07787660772650115,
+   "pred_both": 0.14332195786602137,
+   "oracle_tensor": 0.02889768031791979,
+   "index": 7,
+   "mask_kind": "hole"
+  },
+  {
+   "flat": 0.046360962442090994,
+   "oracle_mean": 0.020877165350126237,
+   "pred_mean": 0.050572711610625556,
+   "oracle_gradient": 0.02619408294879343,
+   "pred_gradient": 0.03902818951784803,
+   "oracle_both": 0.017175671076221467,
+   "pred_both": 0.03499514157196783,
+   "oracle_tensor": 0.005407626421672603,
+   "index": 8,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.06472501001934271,
+   "oracle_mean": 0.03019720690601033,
+   "pred_mean": 0.0575596798412369,
+   "oracle_gradient": 0.05217639408239752,
+   "pred_gradient": 0.06442630928119693,
+   "oracle_both": 0.027891355637140857,
+   "pred_both": 0.06611365001545214,
+   "oracle_tensor": 0.0125322939847997,
+   "index": 9,
+   "mask_kind": "hole"
+  },
+  {
+   "flat": 0.05766306354886412,
+   "oracle_mean": 0.04754554257910747,
+   "pred_mean": 0.05439158814720951,
+   "oracle_gradient": 0.043158140705496895,
+   "pred_gradient": 0.05494159238015367,
+   "oracle_both": 0.03182428714244836,
+   "pred_both": 0.0487113362217758,
+   "oracle_tensor": 0.002391690554569024,
+   "index": 10,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.09998343957880576,
+   "oracle_mean": 0.06667416248563121,
+   "pred_mean": 0.09997243306367452,
+   "oracle_gradient": 0.08917209203517618,
+   "pred_gradient": 0.10759657088620316,
+   "oracle_both": 0.06314424509298952,
+   "pred_both": 0.11251121600687734,
+   "oracle_tensor": 0.0015080868050008321,
+   "index": 11,
+   "mask_kind": "hole"
+  },
+  {
+   "flat": 0.04878912376995107,
+   "oracle_mean": 0.028000802651908963,
+   "pred_mean": 0.04317824234966392,
+   "oracle_gradient": 0.036041456022853934,
+   "pred_gradient": 0.0411158931845943,
+   "oracle_both": 0.024169049192390137,
+   "pred_both": 0.035726851026624026,
+   "oracle_tensor": 0.017073574085444063,
+   "index": 12,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.11043183977178837,
+   "oracle_mean": 0.05054571732818557,
+   "pred_mean": 0.10308650747910353,
+   "oracle_gradient": 0.08271644654836877,
+   "pred_gradient": 0.10757393090176481,
+   "oracle_both": 0.0437546478475071,
+   "pred_both": 0.10291822654879874,
+   "oracle_tensor": 0.08006748609613992,
+   "index": 13,
+   "mask_kind": "hole"
+  },
+  {
+   "flat": 0.055353788328124785,
+   "oracle_mean": 0.02555306631611588,
+   "pred_mean": 0.043819225174080746,
+   "oracle_gradient": 0.041493228615040165,
+   "pred_gradient": 0.04772926818782266,
+   "oracle_both": 0.022015955844155326,
+   "pred_both": 0.037793648791409305,
+   "oracle_tensor": 0.023231402061310722,
+   "index": 14,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.12292602581577408,
+   "oracle_mean": 0.06140290309204562,
+   "pred_mean": 0.09790111182912706,
+   "oracle_gradient": 0.07800357061171494,
+   "pred_gradient": 0.1054882605093577,
+   "oracle_both": 0.048828576664564596,
+   "pred_both": 0.0960616395010781,
+   "oracle_tensor": 0.0070641418261645945,
+   "index": 15,
+   "mask_kind": "hole"
+  },
+  {
+   "flat": 0.057662787470890195,
+   "oracle_mean": 0.01902675052240745,
+   "pred_mean": 0.06332943867277321,
+   "oracle_gradient": 0.02978252155681871,
+   "pred_gradient": 0.05539256329433314,
+   "oracle_both": 0.017195041896442175,
+   "pred_both": 0.05276251693583609,
+   "oracle_tensor": 0.01857911820816735,
+   "index": 16,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.082259391823883,
+   "oracle_mean": 0.05928408514866556,
+   "pred_mean": 0.09833800634593463,
+   "oracle_gradient": 0.0572073091404393,
+   "pred_gradient": 0.11033074820088323,
+   "oracle_both": 0.045264762796734546,
+   "pred_both": 0.09918971458187964,
+   "oracle_tensor": 0.0341240455775602,
+   "index": 17,
+   "mask_kind": "hole"
+  },
+  {
+   "flat": 0.04206721623794939,
+   "oracle_mean": 0.028725986071798215,
+   "pred_mean": 0.07505493605538427,
+   "oracle_gradient": 0.02563963909817054,
+   "pred_gradient": 0.04622995735643106,
+   "oracle_both": 0.02172226487026086,
+   "pred_both": 0.04996312325163788,
+   "oracle_tensor": 0.0091412928138721,
+   "index": 18,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.10549758943773688,
+   "oracle_mean": 0.03478030086987163,
+   "pred_mean": 0.06746941013117505,
+   "oracle_gradient": 0.08059851646184307,
+   "pred_gradient": 0.08958257680509771,
+   "oracle_both": 0.028356413292675922,
+   "pred_both": 0.0797432939302348,
+   "oracle_tensor": 0.0017919986524698411,
+   "index": 19,
+   "mask_kind": "hole"
+  },
+  {
+   "flat": 0.03113213560506369,
+   "oracle_mean": 0.026236225335078585,
+   "pred_mean": 0.028727001275911428,
+   "oracle_gradient": 0.028415105618887722,
+   "pred_gradient": 0.030992122196129217,
+   "oracle_both": 0.02546114530140726,
+   "pred_both": 0.030595545463903206,
+   "oracle_tensor": 0.030452334040961093,
+   "index": 20,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.06763589633210755,
+   "oracle_mean": 0.04705790280632938,
+   "pred_mean": 0.052872204372047676,
+   "oracle_gradient": 0.03810284832440525,
+   "pred_gradient": 0.05408305224669575,
+   "oracle_both": 0.03466425468752948,
+   "pred_both": 0.051210582819721656,
+   "oracle_tensor": 0.02433914012094706,
+   "index": 21,
+   "mask_kind": "hole"
+  },
+  {
+   "flat": 0.05484508953933478,
+   "oracle_mean": 0.042135390520621756,
+   "pred_mean": 0.06690334934312973,
+   "oracle_gradient": 0.03472729772223304,
+   "pred_gradient": 0.048440805084036254,
+   "oracle_both": 0.03040590864500665,
+   "pred_both": 0.04683328588293449,
+   "oracle_tensor": 0.014958234457093097,
+   "index": 22,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.0851331310909797,
+   "oracle_mean": 0.07225140984992681,
+   "pred_mean": 0.09136450318486682,
+   "oracle_gradient": 0.06706240472441027,
+   "pred_gradient": 0.08856796038497278,
+   "oracle_both": 0.05242094865745907,
+   "pred_both": 0.08891599294872612,
+   "oracle_tensor": 0.013531361376319629,
+   "index": 23,
+   "mask_kind": "hole"
+  },
+  {
+   "flat": 0.045200374980818955,
+   "oracle_mean": 0.037752311498358164,
+   "pred_mean": 0.0418791042976321,
+   "oracle_gradient": 0.0388847311617093,
+   "pred_gradient": 0.04424794247323955,
+   "oracle_both": 0.0331300200882256,
+   "pred_both": 0.03980963217886372,
+   "oracle_tensor": 0.004287851455835054,
+   "index": 24,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.194245225964843,
+   "oracle_mean": 0.06301137479947462,
+   "pred_mean": 0.1401876937210654,
+   "oracle_gradient": 0.12204314246536,
+   "pred_gradient": 0.13525109963949872,
+   "oracle_both": 0.05544543426866551,
+   "pred_both": 0.12371191063749759,
+   "oracle_tensor": 0.016615062060811536,
+   "index": 25,
+   "mask_kind": "hole"
+  },
+  {
+   "flat": 0.08721775106687192,
+   "oracle_mean": 0.03174179129502891,
+   "pred_mean": 0.07476374026703174,
+   "oracle_gradient": 0.04400676810713218,
+   "pred_gradient": 0.0760058994786607,
+   "oracle_both": 0.025539761676364327,
+   "pred_both": 0.0775977708713725,
+   "oracle_tensor": 0.02235733359493562,
+   "index": 26,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.08309136261178418,
+   "oracle_mean": 0.06581249185861636,
+   "pred_mean": 0.0704524181256835,
+   "oracle_gradient": 0.061001015801878535,
+   "pred_gradient": 0.07219538796484631,
+   "oracle_both": 0.05648877236053765,
+   "pred_both": 0.06983270513754754,
+   "oracle_tensor": 0.06375063394913633,
+   "index": 27,
+   "mask_kind": "hole"
+  },
+  {
+   "flat": 0.06684648567921345,
+   "oracle_mean": 0.0340312653604965,
+   "pred_mean": 0.056460425802495454,
+   "oracle_gradient": 0.03852926112086224,
+   "pred_gradient": 0.06207606558159092,
+   "oracle_both": 0.02711197765939364,
+   "pred_both": 0.05468833763157558,
+   "oracle_tensor": 0.043748515227526076,
+   "index": 28,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.06941655793212079,
+   "oracle_mean": 0.05457617544005254,
+   "pred_mean": 0.08721163584348535,
+   "oracle_gradient": 0.06437941692084201,
+   "pred_gradient": 0.08973572686981261,
+   "oracle_both": 0.0517830835316133,
+   "pred_both": 0.08279354360072413,
+   "oracle_tensor": 0.006360516837489595,
+   "index": 29,
+   "mask_kind": "hole"
+  },
+  {
+   "flat": 0.06419800905721923,
+   "oracle_mean": 0.03969352206106418,
+   "pred_mean": 0.0668788089266364,
+   "oracle_gradient": 0.05049281734414597,
+   "pred_gradient": 0.06672861533810355,
+   "oracle_both": 0.031190006486621756,
+   "pred_both": 0.06373508243072892,
+   "oracle_tensor": 0.01474490106063539,
+   "index": 30,
+   "mask_kind": "gap"
+  },
+  {
+   "flat": 0.056629705631691556,
+   "oracle_mean": 0.033647197755318235,
+   "pred_mean": 0.06372279379843808,
+   "oracle_gradient": 0.03997767199740997,
+   "pred_gradient": 0.06361937379055918,
+   "oracle_both": 0.026723303097218577,
+   "pred_both": 0.06488498597336673,
+   "oracle_tensor": 0.022349471866759965,
+   "index": 31,
+   "mask_kind": "hole"
+  }
+ ],
+ "minutes": 9.1
+}

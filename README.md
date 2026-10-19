@@ -9,7 +9,71 @@ and was 25x weaker than the energy gaps), and its scoreboard (MSE) rewards blur.
 built so that each part can actually matter — and then measured against strong simple methods on
 **preregistered gates** ([docs/PREREG.md](docs/PREREG.md), committed before any test image was touched).
 
-RESULTS_PLACEHOLDER
+## Results (test sets, after freezing everything on validation)
+
+Mean squared error on the hidden pixels — lower is better. **Bold** = best on that set.
+
+| Method | Synthetic contours (R1's 32 images) | Natural crops (64, three unseen photos) |
+|---|---:|---:|
+| Diffusion fill | 0.1309 | 0.00803 |
+| 1 nearest training image | 0.1163 | 0.02835 |
+| Average of 4 nearest | 0.0802 | 0.02214 |
+| Wiener (full-image Gaussian, tuned) | **0.0677** | 0.00733 |
+| *R1 relational model (CI receipt)* | *0.1314* | — |
+| *SihtiImageModel3 (CI receipt)* | *0.0818* | — |
+| Linear medium (1 state) + layout | 0.0770 | 0.00539 |
+| Linear medium, no layout | 0.0854 | 0.00539 |
+| 20 states + layout, settled | 0.0890 | 0.00365 |
+| 20 states, no layout | 0.1279 | 0.00363 |
+| 20 states + ping | 0.0883 | 0.00363 |
+| 20 states + sham ping | 0.0886 | 0.00363 |
+| 20 states, Gibbs posterior mean | 0.0865 | **0.00362** |
+
+Diffusion and 4-nearest reproduce R1's CI numbers exactly on the synthetic set (same images, seeds and masks).
+
+| Preregistered gate | Synthetic | Natural |
+|---|---|---|
+| G1a layout helps the linear medium (≥5%) | **PASS** +9.8% | FAIL −0.1% |
+| G1b layout helps the 20-state medium (≥5%) | **PASS** +30.4% | FAIL −0.5% |
+| G2 switching local states beat the linear medium (≥5%) | FAIL −15.5% | **PASS** +32.3% |
+| G3 ping beats sham, best-of-7 (≥2%, ≥2 distinct) | FAIL +0.4% | FAIL +0.2% |
+| G4 declared model (linear medium) beats min(4-nearest, Wiener) | FAIL −13.8% | **PASS** +26.5% |
+
+Receipts: [`results/synthetic`](results/synthetic) and [`results/natural`](results/natural) — `metrics.json`
+(every image, every arm), `comparison.png`, `loop.gif`.
+
+### What this says
+
+**Each half of the up-and-down loop pays — in a different world, never together.**
+
+* **Top-down (the layout) pays where pictures are layouts.** In the contour world the layout prior cuts error
+  30% for the 20-state medium and 10% for the linear one. In natural crops it does nothing: the best layout
+  weight on validation was almost zero, and on test it changes nothing.
+* **Local states pay where pictures are made of edges.** On natural crops the 20-state medium beats the
+  linear medium by 32% and Wiener by 50%; you can see it continue edges cleanly in `results/natural/comparison.png`.
+  In the contour world the same states hurt: the commonest state is "empty background", and a hard choice
+  erases strokes the linear medium would have half-drawn. That is EPLL's known strength on natural images,
+  reproduced, not discovered.
+* **The ping is a good search and a useless one.** On the contours it finds much deeper minima than the sham
+  (energy drop 18.4 vs 0.8 per image, ~3 distinct settled states each), yet the pictures are no better
+  (0.0883 vs 0.0886). A deeper minimum of this energy is not a truer image. On natural crops the states are
+  rarely stuck (1.6 distinct states), so there is little to search. Same verdict as SihtiBrain V3 and R1: the
+  probe works mechanically; the advantage is not there.
+* **Averaging over states (Gibbs) is the best use of them** — best on natural, best of the 20-state variants on
+  synthetic — but only by a hair over committing to one.
+* On the contours a plain tuned Gaussian over the whole image (Wiener) beats everything here. R1 never ran it.
+
+### Caveats that matter
+
+* The natural test is 64 crops from **three** photographs. On validation (crops from the training photos'
+  bottom quarter: grass, gravel, brick, text, …) the 20-state and linear media **tied** (0.00609 vs 0.00605);
+  the 32% win appeared on the test photos, which have cleaner edges. Treat the size of that win as
+  photo-dependent until it is reproduced on more images — e.g. your own folders.
+* The natural parameter grids were extended twice on validation because the choices sat on grid edges
+  (recorded in `params_natural.json`); the synthetic noise level sits on its grid edge and was not extended,
+  because its test had already been run.
+* MSE still rewards blur. All model arms are blurrier than the truth (sharpness 0.4–0.65); retrieval is
+  sharper and worse.
 
 ## The model
 
@@ -55,7 +119,7 @@ python -m pip install -r requirements.txt pytest
 python -m pytest -q                         # energy never rises, exact global step, no target leak, blind linear ping
 python run.py --data synthetic              # R1's exact 32 test images, seeds and masks
 python run.py --data natural                # 64 crops of three photographs never used in training
-python run.py --train-folder train --eval-folder unseen --eval-limit 32    # your own pictures
+python run.py --train-folder train --eval-folder unseen --eval-limit 32    # your own pictures (e.g. THINGS)
 ```
 
 Each run writes `runs/<name>/metrics.json` (every image, every arm), `comparison.png` and `loop.gif`
